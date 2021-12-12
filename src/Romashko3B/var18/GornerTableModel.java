@@ -3,6 +3,7 @@ package Romashko3B.var18;
 import javax.swing.table.AbstractTableModel;
 
 public class GornerTableModel extends AbstractTableModel {
+
     //параметры вычисления по схеме Горнера
     private Double[] coefficients;
     private Double from;
@@ -25,17 +26,20 @@ public class GornerTableModel extends AbstractTableModel {
         return step;
     }
     public int getColumnCount() {
-// В данной модели два столбца
-        return 2;
+// задаём три столбца
+        return 3;
     }
     public int getRowCount() {
 // Вычислить количество точек между началом и концом отрезка исходя из шага табулирования
         return new Double(Math.ceil((to-from)/step)).intValue()+1;
     }
+
+    //значения второй колонки
     public Object getValueAt(int row, int col) {
 // Вычислить значение X как НАЧАЛО_ОТРЕЗКА + ШАГ*НОМЕР_СТРОКИ
         double x = from + step * row;
 
+        //схема Горнера
         double result = coefficients[0];
         for (int i = 1; i < coefficients.length; ++i) {
             result = result * x + coefficients[i];
@@ -50,6 +54,16 @@ public class GornerTableModel extends AbstractTableModel {
 // Если запрашивается значение 2-го столбца, то это значение многочлена
                 return result;
             }
+            //Значения 3-го столбца - Boolean; проверка на огранич. симметрию
+            case 2: {
+                String parts[] = (Double.toString(result)).split("\\.");
+                if(parts.length == 2) {
+                    if (parts[0].compareTo(parts[1])==0) return true;
+                    else return false;
+                }else {
+                    return 0;
+                }
+            }
             default:
                 return 0.0;
         }
@@ -58,16 +72,27 @@ public class GornerTableModel extends AbstractTableModel {
 
     public String getColumnName(int col) {
         switch (col) {
-            case 0:
+            case 0: {
 // Название 1-го столбца
                 return "Значение X";
-            default:
+            }
+            case 1: {
 // Название 2-го столбца
                 return "Значение многочлена";
+            }
+            case 2: {
+                // Название 3-го столбца
+                return "Ограниченная симметрия";
+            }
+            default: {
+                return "";
+            }
         }
     }
+
     public Class<?> getColumnClass(int col) {
-// И в 1-ом и во 2-ом столбце находятся значения типа Double
+// И в 1-ом и во 2-ом столбце находятся значения типа Double, в 3-ем Boolean
+        if(col==2) return Boolean.class;
         return Double.class;
     }
 }

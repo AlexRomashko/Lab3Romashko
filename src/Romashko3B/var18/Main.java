@@ -38,8 +38,6 @@ public class Main extends JFrame {
     private Double[] coefficients;
 
     // Объект диалогового окна для выбора файлов
-// Компонент не создаѐтся изначально, т.к. может и не понадобиться
-// пользователю если тот не собирается сохранять данные в файл
     private JFileChooser fileChooser = null;
 
     // Элементы меню вынесены в поля данных класса, так как ими необходимо
@@ -78,9 +76,9 @@ public class Main extends JFrame {
                 (kit.getScreenSize().height - HEIGHT)/2);
 // Создать меню
         JMenuBar menuBar = new JMenuBar();
+        setJMenuBar(menuBar);
 
 //добавляем пункты в меню
-        setJMenuBar(menuBar);
         JMenu fileMenu = new JMenu("Файл");
         menuBar.add(fileMenu);
         JMenu tableMenu = new JMenu("Таблица");
@@ -99,10 +97,11 @@ public class Main extends JFrame {
                     saveToTextFile(fileChooser.getSelectedFile());
             }
         };
+
 // Добавить соответствующий пункт подменю в меню "Файл"
         saveToTextMenuItem = fileMenu.add(saveToTextAction);
-// По умолчанию пункт меню является недоступным (данных ещѐ нет)
         saveToTextMenuItem.setEnabled(false);
+
         // Создать новое "действие" по сохранению в текстовый файл
         Action saveToGraphicsAction = new AbstractAction("Сохранить данные для построения графика") {
             public void actionPerformed(ActionEvent event) {
@@ -114,6 +113,7 @@ public class Main extends JFrame {
                 saveToGraphicsFile(fileChooser.getSelectedFile());
             }
         };
+
 // Добавить соответствующий пункт подменю в меню "Файл"
         saveToGraphicsMenuItem = fileMenu.add(saveToGraphicsAction);
         saveToGraphicsMenuItem.setEnabled(false);
@@ -151,9 +151,8 @@ public class Main extends JFrame {
         textFieldTo.setMaximumSize(textFieldTo.getPreferredSize());
         JLabel labelForStep = new JLabel("с шагом:");
         textFieldStep = new JTextField("0.1", 10);
-
-// Установить максимальный размер равный предпочтительному, чтобы предотвратить увеличение размера поля ввода
         textFieldStep.setMaximumSize(textFieldStep.getPreferredSize());
+
 // Создать контейнер 1 типа "коробка с горизонтальной укладкой"
         Box hboxRange = Box.createHorizontalBox();
 // Задать для контейнера тип рамки "объѐмная"
@@ -237,6 +236,7 @@ public class Main extends JFrame {
                 getContentPane().validate();
             }
         });
+
 // Поместить созданные кнопки в контейнер
         Box hboxButtons = Box.createHorizontalBox();
         hboxButtons.setBorder(BorderFactory.createBevelBorder(1));
@@ -245,14 +245,13 @@ public class Main extends JFrame {
         hboxButtons.add(Box.createHorizontalStrut(30));
         hboxButtons.add(buttonReset);
         hboxButtons.add(Box.createHorizontalGlue());
-// Установить предпочтительный размер области равным удвоенному минимальному, чтобы при
-// компоновке окна область совсем не сдавили
         hboxButtons.setPreferredSize(new Dimension(new
                 Double(hboxButtons.getMaximumSize().getWidth()).intValue(), new
                 Double(hboxButtons.getMinimumSize().getHeight()).intValue()*2));
+
 // Разместить контейнер с кнопками в нижней (южной) области граничной компоновки
         getContentPane().add(hboxButtons, BorderLayout.SOUTH);
-// Область для вывода результата пока что пустая
+
         hBoxResult = Box.createHorizontalBox();
         hBoxResult.add(new JPanel());
 // Установить контейнер hBoxResult в главной (центральной) области граничной компоновки
@@ -307,6 +306,8 @@ public class Main extends JFrame {
             System.out.println("Невозможно табулировать многочлен, для которого не задано ни одного коэффициента!");
             System.exit(-1);
         }
+
+        //заносим параметры в массив коэффицентов
         Double[] coefficients = new Double[args.length];
         int i = 0;
         try {
@@ -314,7 +315,9 @@ public class Main extends JFrame {
                 coefficients[i++] = Double.parseDouble(arg);
             }
         }
+        
         catch (NumberFormatException ex) {
+            // Если преобразование невозможно - сообщить об ошибке и завершиться
             System.out.println("Ошибка преобразования строки '" +
                     args[i] + "' в число типа Double");
             System.exit(-2);

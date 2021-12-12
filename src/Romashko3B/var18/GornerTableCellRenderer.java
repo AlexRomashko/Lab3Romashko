@@ -16,10 +16,27 @@ public class GornerTableCellRenderer implements TableCellRenderer {
     private JLabel label = new JLabel();
 
     // Ищем ячейки, строковое представление которых совпадает с needle
-// (иголкой). Применяется аналогия поиска иголки в стоге сена, в роли
-// стога сена - таблица
+// (иголкой). Применяется аналогия поиска иголки в стоге сена, в роли стога сена - таблица
     private String needle = null;
     private DecimalFormat formatter = (DecimalFormat)NumberFormat.getInstance();
+
+
+    //функция проверки на огранич. симметрию
+    private boolean FractionalPart(String number){
+        String[] str = number.split("\\.");
+        if(str.length==2){
+            int n=str[1].length();
+            int N = Integer.valueOf(str[1]);
+            int sum=0;
+            for(int i=0; i<n;i++){
+                sum+=N%10;
+                N=N/10;
+            }
+            if(sum%10 == 0) return true;
+        }
+        return false;
+    }
+
     public GornerTableCellRenderer() {
 // Показывать только 5 знаков после запятой
         formatter.setMaximumFractionDigits(5);
@@ -49,11 +66,12 @@ public class GornerTableCellRenderer implements TableCellRenderer {
 // Установить текст надписи равным строковому представлению числа
         label.setText(formattedDouble);
         if (col==1 && needle!=null && needle.equals(formattedDouble)) {
-// Номер столбца = 1 (т.е. второй столбец) + иголка не null
-// (значит что-то ищем) +
+
 // значение иголки совпадает со значением ячейки таблицы -
 // окрасить задний фон панели в красный цвет
             panel.setBackground(Color.RED);
+        } else if(FractionalPart(formattedDouble)){
+            panel.setBackground(Color.GREEN);
         } else {
 // Иначе - в обычный белый
             panel.setBackground(Color.WHITE);
